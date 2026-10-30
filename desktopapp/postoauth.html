@@ -30,10 +30,13 @@ a{color:inherit}
 .container{background:var(--surface);border-radius:6px;padding:60px 48px;max-width:440px;width:100%;text-align:center;box-shadow:12px 12px 0 var(--brand)}
 .spinner{width:50px;height:50px;border:4px solid var(--tint);border-top:4px solid var(--brand);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.checkmark{width:50px;height:50px;color:var(--brand);margin:0 auto 24px;display:none}
 h1{font-size:1.8rem;margin-bottom:12px;color:var(--ink)}
 p{color:var(--soft);font-size:1rem;line-height:1.6}
 .success{color:var(--brand);font-size:48px;margin-bottom:20px}
 .error{color:#C53030;font-size:48px;margin-bottom:20px}
+.btn-primary{background:var(--brand);color:var(--brand-ink);text-decoration:none;font-weight:600;padding:14px 24px;border-radius:6px;display:inline-block;box-shadow:3px 3px 0 var(--ink);transition:transform .12s,box-shadow .12s;margin-top:20px}
+.btn-primary:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 
 @media (max-width:480px){
   .container{padding:40px 32px}
@@ -45,8 +48,12 @@ p{color:var(--soft);font-size:1rem;line-height:1.6}
 <body>
 <div class="container">
   <div class="spinner"></div>
+  <svg class="checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
   <h1>Authenticating</h1>
   <p>Please wait while we complete your authentication...</p>
+  <a href="#" id="openAppBtn" class="btn-primary" style="display:none;">Open App</a>
 </div>
 
 <script>
@@ -56,6 +63,17 @@ p{color:var(--soft);font-size:1rem;line-height:1.6}
   if (id) {
     console.log('OAuth ID:', id);
     window.location.href = `classcastleapp://oauth-callback?id=${id}`;
+
+    // Show authenticated state after redirect attempt
+    setTimeout(() => {
+      document.querySelector('.spinner').style.display = 'none';
+      document.querySelector('.checkmark').style.display = 'block';
+      document.querySelector('h1').textContent = 'Authenticated';
+      document.querySelector('p').textContent = 'You can now close this window and return to the app.';
+      const openAppBtn = document.getElementById('openAppBtn');
+      openAppBtn.style.display = 'inline-block';
+      openAppBtn.href = `classcastleapp://oauth-callback?id=${id}`;
+    }, 1500);
   } else {
     document.querySelector('.spinner').style.display = 'none';
     document.querySelector('h1').textContent = 'Error';
